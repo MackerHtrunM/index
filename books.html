@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookshelf | FHSH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;500;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --card-bg: rgba(20, 20, 25, 0.9);
+            --accent-color: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.5);
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --grid-color: rgba(0, 242, 255, 0.05);
+            --cursor-angle: 0deg;
+            --edge-proximity: 0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif; min-height: 100vh; padding: 40px 10%; line-height: 1.6; overflow-x: hidden; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px); background-size: 50px 50px; z-index: -2; }
+        
+        nav { position: fixed; top: 0; left: 0; width: 100%; padding: 1rem 10%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(10px); background: rgba(10, 10, 12, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .back-btn { color: var(--accent-color); text-decoration: none; font-weight: bold; font-family: 'JetBrains Mono', monospace; transition: 0.3s; }
+        .back-btn:hover { text-shadow: 0 0 10px var(--accent-glow); }
+        .lang-switch { display: flex; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); padding: 4px; border-radius: 4px; }
+        .lang-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 2px 8px; border-radius: 2px; transition: 0.3s; }
+        .lang-btn.active { background: var(--accent-color); color: var(--bg-color); font-weight: bold; }
+
+        h1 { font-size: 3rem; margin-top: 80px; margin-bottom: 50px; text-align: center; }
+        .category-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        
+        .book-card { background: var(--card-bg); padding: 2.5rem; border-radius: 24px; border: 1px solid rgba(255, 255, 255, 0.05); transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); position: relative; overflow: hidden; height: 100%; display: flex; flex-direction: column; }
+        .book-card:hover { transform: translateY(-10px); border-color: var(--accent-color); box-shadow: 0 10px 30px rgba(0, 242, 255, 0.1); }
+        
+        .cat-tag { display: inline-block; padding: 4px 12px; border-radius: 20px; background: rgba(0, 242, 255, 0.1); color: var(--accent-color); font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; margin-bottom: 1.5rem; border: 1px solid rgba(0, 242, 255, 0.2); }
+        
+        .book-info { margin-top: auto; }
+        .book-name { font-size: 1.8rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; display: block; }
+        .book-author { font-size: 1rem; color: var(--accent-color); font-family: 'JetBrains Mono', monospace; margin-bottom: 1.5rem; display: block; }
+        .book-desc { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; }
+
+        /* Scroll-in Animation */
+        .scroll-in { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .scroll-in.visible { opacity: 1; transform: translateY(0); }
+
+        footer { margin-top: 100px; text-align: center; color: var(--text-secondary); font-size: 0.8rem; padding: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="./index.html" class="back-btn" data-t="back">← 返回主頁</a>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLang('zh')">ZH</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('jp')">JP</button>
+        </div>
+    </nav>
+
+    <h1 data-t="title" class="scroll-in">我的書單</h1>
+
+    <div class="category-container">
+        <!-- Category 1: Romance -->
+        <div class="book-card scroll-in">
+            <div class="cat-tag" data-t="cat_romance">言情</div>
+            <div class="book-info">
+                <span class="book-name" data-t="b1_name">來自天堂的雨</span>
+                <span class="book-author" data-t="b1_author">晨羽</span>
+                <p class="book-desc" data-t="b1_desc">一段跨越命運羈絆的愛戀，文字細膩，情感真摯，是讓人沉浸其中無法自拔的言情之作。</p>
+            </div>
+        </div>
+        <!-- Category 2: Sci-Fi -->
+        <div class="book-card scroll-in">
+            <div class="cat-tag" data-t="cat_scifi">科幻</div>
+            <div class="book-info">
+                <span class="book-name" data-t="b2_name">修練</span>
+                <span class="book-author" data-t="b2_author">陳郁如</span>
+                <p class="book-desc" data-t="b2_desc">架構龐大的奇幻世界觀，充滿想像力的科幻設定，帶領讀者踏入一場超越現實的冒險旅程。</p>
+            </div>
+        </div>
+        <!-- Category 3: Psychology -->
+        <div class="book-card scroll-in">
+            <div class="cat-tag" data-t="cat_psychology">心理學</div>
+            <div class="book-info">
+                <span class="book-name" data-t="b3_name">二十四個比利</span>
+                <span class="book-author" data-t="b3_author">Daniel Keyes</span>
+                <p class="book-desc" data-t="b3_desc">真實事件改編，一個擁有二十四重人格的男人的故事。不只是驚悚，更是對人類心理深處的探索，震撼人心。</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FHSH | Bookshelf</p>
+    </footer>
+
+    <script>
+        const trans = {
+            zh: { 
+                back: "← 返回主頁", title: "我的書單", 
+                cat_romance: "言情", cat_scifi: "科幻", cat_psychology: "心理學",
+                b1_name: "來自天堂的雨", b1_author: "晨羽", b1_desc: "一段跨越命運羈絆的愛戀，文字細膩，情感真摯，是讓人沉浸其中無法自拔的言情之作。",
+                b2_name: "修練", b2_author: "陳郁如", b2_desc: "架構龐大的奇幻世界觀，充滿想像力的科幻設定，帶領讀者踏入一場超越現實的冒險旅程。",
+                b3_name: "二十四個比利", b3_author: "Daniel Keyes", b3_desc: "真實事件改編，一個擁有二十四重人格的男人的故事。不只是驚悚，更是對人類心理深處的探索，震撼人心。"
+            },
+            en: { 
+                back: "← Back", title: "My Bookshelf", 
+                cat_romance: "Romance", cat_scifi: "Sci-Fi", cat_psychology: "Psychology",
+                b1_name: "Rain from Heaven", b1_author: "Chen Yu", b1_desc: "A romance that transcends fate — tender writing and heartfelt emotions make it impossible to put down.",
+                b2_name: "Cultivation", b2_author: "Chen Yu-ju", b2_desc: "An expansive fantasy world with a rich sci-fi framework, pulling readers into an adventure beyond reality.",
+                b3_name: "The Minds of Billy Milligan", b3_author: "Daniel Keyes", b3_desc: "Based on a true story, this is the haunting account of a man with 24 personalities — not just a thriller, but a profound exploration of the human mind."
+            },
+            jp: { 
+                back: "← 戻る", title: "私の本棚", 
+                cat_romance: "恋愛", cat_scifi: "SF", cat_psychology: "心理学",
+                b1_name: "天国からの雨", b1_author: "晨羽", b1_desc: "運命の絆を越えたロマンス。繊細な文体と真摯な感情が読者を物語の世界に引き込む。",
+                b2_name: "修練", b2_author: "陳郁如", b2_desc: "壮大な世界観と豊かなSF設定が融合した作品。現実を超えた冒険へと読者を誘う。",
+                b3_name: "24人のビリー・ミリガン", b3_author: "ダニエル・キイス", b3_desc: "実話に基づいた物語。24の人格を持つ男の記録は、スリラーを超えた人間心理への深い洞察をもたらす。"
+            }
+        };
+        function setLang(l) {
+            document.querySelectorAll('[data-t]').forEach(el => { el.textContent = trans[l][el.getAttribute('data-t')]; });
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === l));
+        }
+
+        // Scroll animation observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.scroll-in').forEach(el => observer.observe(el));
+
+        window.onload = () => setLang('zh');
+    </script>
+</body>
+</html>

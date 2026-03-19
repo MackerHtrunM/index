@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FHSH | Personal Portfolio</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;500;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --card-bg: rgba(20, 20, 25, 0.9);
+            --accent-color: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.5);
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --nav-bg: rgba(10, 10, 12, 0.8);
+            --grid-color: rgba(0, 242, 255, 0.05);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --cursor-angle: 0deg;
+            --edge-proximity: 0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 50px 50px; z-index: -2;
+        }
+
+        .glow-sphere {
+            position: fixed; width: 40vw; height: 40vw;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            filter: blur(80px); z-index: -1; pointer-events: none; opacity: 0.3;
+        }
+
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 1.5rem 10%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; backdrop-filter: blur(10px); background: var(--nav-bg);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 1.5rem;
+            color: var(--accent-color); text-transform: uppercase; letter-spacing: 2px;
+        }
+
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a {
+            color: var(--text-primary); text-decoration: none; font-size: 0.8rem;
+            text-transform: uppercase; letter-spacing: 1px; transition: var(--transition);
+        }
+        .nav-links a:hover { color: var(--accent-color); text-shadow: 0 0 10px var(--accent-glow); }
+
+        .lang-switch {
+            display: flex; gap: 0.5rem; margin-left: 1rem; padding: 4px;
+            background: rgba(255, 255, 255, 0.05); border-radius: 4px;
+        }
+
+        .lang-btn {
+            background: none; border: none; color: var(--text-secondary);
+            cursor: pointer; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem; padding: 2px 8px; border-radius: 2px; transition: var(--transition);
+        }
+
+        .lang-btn.active { background: var(--accent-color); color: var(--bg-color); font-weight: bold; }
+
+        #hero {
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; position: relative; text-align: center; padding: 0 1rem;
+        }
+
+        #particle-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        .hero-name {
+            font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 700; margin-bottom: 1rem;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .typewriter-container {
+            font-family: 'JetBrains Mono', monospace; font-size: clamp(0.9rem, 3vw, 1.3rem);
+            color: var(--accent-color); min-height: 1.6em;
+        }
+
+        .cursor {
+            display: inline-block; width: 10px; height: 1.2rem;
+            background-color: var(--accent-color); margin-left: 5px; animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        section { padding: 100px 10%; max-width: 1400px; margin: 0 auto; }
+
+        .section-title { font-size: 2.5rem; margin-bottom: 3rem; position: relative; display: inline-block; }
+        .section-title::after {
+            content: ""; position: absolute; bottom: -10px; left: 0; width: 60%; height: 4px;
+            background: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        /* About Text Fade-in Animation */
+        .fade-in-text { opacity: 0; transform: translateX(20px); transition: all 1s ease-out 0.3s; }
+        .reveal.active .fade-in-text { opacity: 1; transform: translateX(0); }
+
+        /* Border Glow Card */
+        .border-glow-card {
+            position: relative; border-radius: 20px; background: rgba(255, 255, 255, 0.03);
+            overflow: hidden; padding: 2px; transition: var(--transition);
+            display: flex; flex-direction: column;
+        }
+
+        .edge-light {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 150%; height: 150%;
+            background: conic-gradient(from var(--cursor-angle), transparent 70%, var(--accent-color) 85%, transparent 100%);
+            opacity: calc(var(--edge-proximity) / 100); transition: opacity 0.3s ease; z-index: 1;
+        }
+
+        .border-glow-inner {
+            position: relative; background: var(--card-bg); border-radius: 18px;
+            padding: 2.5rem; height: 100%; width: 100%; z-index: 2;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+            gap: 1.5rem; backdrop-filter: blur(10px);
+        }
+
+        .border-glow-card:hover { transform: scale(1.02); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); }
+
+        /* Hobbies Section */
+        .hobbies-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; }
+        .hobby-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+        .hobby-btn {
+            padding: 0.8rem 1.5rem; background: transparent; border: 1px solid var(--accent-color);
+            color: var(--accent-color); text-decoration: none; border-radius: 5px;
+            font-size: 0.9rem; font-weight: bold; transition: var(--transition); margin-top: auto;
+        }
+        .hobby-btn:hover { background: var(--accent-color); color: var(--bg-color); box-shadow: 0 0 15px var(--accent-glow); }
+
+        /* Contact Grid */
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; }
+        .qr-container { background: #fff; padding: 10px; border-radius: 12px; width: 160px; height: 160px; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
+        .qr-container img { width: 100%; height: 100%; border-radius: 4px; }
+        
+        .contact-icon-large { font-size: 2.5rem; color: var(--accent-color); margin-bottom: 0.5rem; text-shadow: 0 0 15px var(--accent-glow); }
+        .contact-label { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 2px; }
+        .contact-value { font-size: 1.1rem; font-weight: 700; color: #fff; }
+        
+        .copy-toast {
+            position: absolute; bottom: 1rem; background: var(--accent-color); color: var(--bg-color);
+            padding: 4px 12px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;
+            opacity: 0; transform: translateY(10px); transition: var(--transition);
+        }
+        .copy-toast.show { opacity: 1; transform: translateY(0); }
+
+        footer { padding: 4rem 10%; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); color: var(--text-secondary); font-size: 0.8rem; }
+
+        @media (max-width: 768px) {
+            nav { padding: 1rem 5%; }
+            .nav-links { display: none; }
+            .about-container { grid-template-columns: 1fr !important; text-align: center; }
+            .about-photo-wrapper { margin: 0 auto 2rem auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glow-sphere" style="top: 10%; left: -5%;"></div>
+    <div class="glow-sphere" style="bottom: 10%; right: -5%;"></div>
+
+    <nav>
+        <div class="logo">FHSH</div>
+        <div class="nav-links">
+            <a href="#hero" data-t="nav_home">首頁</a>
+            <a href="#about" data-t="nav_about">關於我</a>
+            <a href="#hobbies" data-t="nav_hobbies">興趣愛好</a>
+            <a href="#contact" data-t="nav_contact">聯絡我</a>
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="setLanguage('zh')">ZH</button>
+                <button class="lang-btn" onclick="setLanguage('en')">EN</button>
+                <button class="lang-btn" onclick="setLanguage('jp')">JP</button>
+            </div>
+        </div>
+    </nav>
+
+    <section id="hero">
+        <canvas id="particle-canvas"></canvas>
+        <h1 class="hero-name" data-t="hero_name">我是魚，用來被炸</h1>
+        <div class="typewriter-container">
+            <span id="typewriter"></span><span class="cursor"></span>
+        </div>
+    </section>
+
+    <section id="about" class="reveal">
+        <h2 class="section-title" data-t="about_title">關於我</h2>
+        <div class="about-container" style="display: grid; grid-template-columns: 220px 1fr; gap: 4rem; align-items: center;">
+            <div class="about-photo-wrapper">
+                <div class="border-glow-card" style="width: 220px; height: 220px; border-radius: 50%;">
+                    <div class="edge-light"></div>
+                    <div class="border-glow-inner" style="padding: 5px; border-radius: 50%;">
+                        <img src="./images/自拍1.jpg" alt="Elim" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-color); box-shadow: 0 0 20px var(--accent-glow);">
+                    </div>
+                </div>
+            </div>
+            <div class="fade-in-text">
+                <p data-t="about_p1" style="font-size: 1.15rem; color: var(--text-primary); margin-bottom: 1.5rem; font-weight: 500;">你好！我是 Elim，目前就讀於復興高中。</p>
+                <p data-t="about_p2" style="font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 1rem;">我對 AI 資安、軟體開發以及各種新技術充滿熱情。</p>
+                <p data-t="about_p3" style="font-size: 1.1rem; color: var(--text-secondary);">我喜歡認識新朋友，很高興認識你們。</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="hobbies" class="reveal">
+        <h2 class="section-title" data-t="hobbies_title">興趣愛好</h2>
+        <div class="hobbies-grid">
+            <!-- Reading -->
+            <div class="border-glow-card">
+                <div class="edge-light"></div>
+                <div class="border-glow-inner">
+                    <div class="hobby-icon">📚</div>
+                    <h3 data-t="hobby_reading_title">閱讀</h3>
+                    <p data-t="hobby_reading_desc">喜愛言情、科幻、懸疑類小說，沉浸在不同世界的文字魅力中。</p>
+                    <a href="./books.html" class="hobby-btn" data-t="btn_explore_books">探索書單</a>
+                </div>
+            </div>
+            <!-- Anime -->
+            <div class="border-glow-card">
+                <div class="edge-light"></div>
+                <div class="border-glow-inner">
+                    <div class="hobby-icon">✨</div>
+                    <h3 data-t="hobby_anime_title">看動漫</h3>
+                    <p data-t="hobby_anime_desc">熱愛各類動漫，欣賞其獨特的敘事風格與角色魅力。</p>
+                    <a href="./anime.html" class="hobby-btn" data-t="btn_explore_anime">查看我最愛的角色</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="reveal">
+        <h2 class="section-title" data-t="contact_title">聯絡我</h2>
+        <div class="contact-grid">
+            <!-- Nickname -->
+            <div class="border-glow-card">
+                <div class="edge-light"></div>
+                <div class="border-glow-inner">
+                    <i class="fa-solid fa-user-tag contact-icon-large"></i>
+                    <span class="contact-label" data-t="contact_nickname_label">暱稱</span>
+                    <span class="contact-value" data-t="contact_nickname_value">我是魚，用來被炸。</span>
+                </div>
+            </div>
+
+            <!-- Instagram QR -->
+            <div class="border-glow-card">
+                <div class="edge-light"></div>
+                <div class="border-glow-inner">
+                    <div class="qr-container">
+                        <img src="./QRcode.png" alt="Instagram QR" onerror="this.src='https://via.placeholder.com/160x160/ffffff/000000?text=QR+CODE'">
+                    </div>
+                    <span class="contact-label" data-t="scan_to_follow">掃碼追蹤</span>
+                    <span class="contact-value">@chiang980420</span>
+                </div>
+            </div>
+
+            <!-- Discord -->
+            <div class="border-glow-card" onclick="copyDiscord('script_alert_script', this)" style="cursor:pointer;">
+                <div class="edge-light"></div>
+                <div class="border-glow-inner">
+                    <i class="fa-brands fa-discord contact-icon-large"></i>
+                    <span class="contact-label">Discord</span>
+                    <span class="contact-value">script_alert_script</span>
+                    <div class="copy-toast" data-t="copy_success">已複製！</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 FHSH | Elim. All rights reserved.</p>
+        <p style="margin-top: 10px; font-size: 0.6rem; opacity: 0.4;">BORN TO BE FRIED, SWIMMING IN CODE.</p>
+    </footer>
+
+    <script>
+        const translations = {
+            zh: {
+                nav_home: "首頁", nav_about: "關於我", nav_hobbies: "興趣愛好", nav_contact: "聯絡我",
+                hero_name: "我是魚，用來被炸",
+                about_title: "關於我", 
+                about_p1: "你好！我是 Elim，目前就讀於復興高中。",
+                about_p2: "我對 AI 資安、軟體開發以及各種新技術充滿熱情。",
+                about_p3: "我喜歡認識新朋友，很高興認識你們。",
+                hobbies_title: "興趣愛好",
+                hobby_reading_title: "閱讀", hobby_reading_desc: "喜愛言情、科幻、懸疑類小說，沉浸在不同世界的文字魅力中。",
+                hobby_anime_title: "看動漫", hobby_anime_desc: "熱愛各類動漫，欣賞其獨特的敘事風格與角色魅力。",
+                btn_explore_books: "探索書單", btn_explore_anime: "查看我最愛的角色",
+                contact_title: "聯絡我", contact_nickname_label: "暱稱", contact_nickname_value: "我是魚，用來被炸。",
+                scan_to_follow: "掃碼追蹤", copy_success: "已複製！",
+                titles: ["復興高中AI資安學程社長", "復興高中 高二生", "山城資訊工作團隊隊長"]
+            },
+            en: {
+                nav_home: "Home", nav_about: "About", nav_hobbies: "Hobbies", nav_contact: "Contact",
+                hero_name: "I am Fish, born to be fried",
+                about_title: "About Me", 
+                about_p1: "Hi! I'm Elim, currently a student at FuHsing Senior High School.",
+                about_p2: "I'm passionate about AI security, software development, and all kinds of emerging technologies.",
+                about_p3: "I love meeting new people — nice to meet you!",
+                hobbies_title: "Hobbies",
+                hobby_reading_title: "Reading", hobby_reading_desc: "Love romance, sci-fi, and mystery novels. Immersing in the magic of words.",
+                hobby_anime_title: "Anime", hobby_anime_desc: "Passionate about various anime series, appreciating their unique storytelling and characters.",
+                btn_explore_books: "Explore Books", btn_explore_anime: "Favorite Characters",
+                contact_title: "Contact", contact_nickname_label: "Nickname", contact_nickname_value: "I am Fish, born to be fried.",
+                scan_to_follow: "Scan to Follow", copy_success: "Copied!",
+                titles: ["President of FuHsing AI & Security Club", "10th Grader at FuHsing Senior High", "Leader of Mountain City IT Team"]
+            },
+            jp: {
+                nav_home: "ホーム", nav_about: "自己紹介", nav_hobbies: "趣味", nav_contact: "連絡先",
+                hero_name: "私は魚、揚げられるためにいます",
+                about_title: "自己紹介", 
+                about_p1: "こんにちは！私はElimといいます。現在、復興高校に在学中です。",
+                about_p2: "AIセキュリティ、ソフトウェア開発、そして新しい技術全般に強い関心を持っています。",
+                about_p3: "新しい友達を作るのが好きで、皆さんと知り合えて嬉しいです。",
+                hobbies_title: "趣味・好きなこと",
+                hobby_reading_title: "読書", hobby_reading_desc: "恋愛、SF、ミステリー小説が好きです。文字を通じて様々な世界に浸るのが楽しみです。",
+                hobby_anime_title: "アニメ", hobby_anime_desc: "様々なアニメが大好きです。独特なストーリー展開やキャラクターの魅力に惹かれます。",
+                btn_explore_books: "本棚を見る", btn_explore_anime: "推しキャラを見る",
+                contact_title: "連絡先", contact_nickname_label: "ニックネーム", contact_nickname_value: "私は魚、揚げられるためにいます。",
+                scan_to_follow: "スキャンでフォロー", copy_success: "コピーしました！",
+                titles: ["復興高校AI・セキュリティ学程部長", "復興高校 高校2年生", "山城情報チームリーダー"]
+            }
+        };
+
+        let currentLang = 'zh';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-t]').forEach(el => {
+                const key = el.getAttribute('data-t');
+                if (translations[lang][key]) el.textContent = translations[lang][key];
+            });
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.textContent.toLowerCase() === lang));
+            initTypewriter();
+        }
+
+        function initTypewriter() {
+            const el = document.getElementById('typewriter');
+            const words = translations[currentLang].titles;
+            let wordIdx = 0, charIdx = 0, isDeleting = false;
+            if (window.typewriterTimeout) clearTimeout(window.typewriterTimeout);
+            function type() {
+                const currentWord = words[wordIdx];
+                el.textContent = isDeleting ? currentWord.substring(0, charIdx - 1) : currentWord.substring(0, charIdx + 1);
+                charIdx = isDeleting ? charIdx - 1 : charIdx + 1;
+                let speed = isDeleting ? 50 : 150;
+                if (!isDeleting && charIdx === currentWord.length) { speed = 2000; isDeleting = true; }
+                else if (isDeleting && charIdx === 0) { isDeleting = false; wordIdx = (wordIdx + 1) % words.length; speed = 500; }
+                window.typewriterTimeout = setTimeout(type, speed);
+            }
+            type();
+        }
+
+        document.addEventListener('mousemove', e => {
+            document.querySelectorAll('.border-glow-card').forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const angle = Math.atan2(y, x) * (180 / Math.PI) + 90;
+                card.style.setProperty('--cursor-angle', `${angle}deg`);
+                const dist = Math.sqrt(x*x + y*y);
+                const maxDist = Math.sqrt((rect.width/2)**2 + (rect.height/2)**2);
+                card.style.setProperty('--edge-proximity', Math.min(100, (dist / maxDist) * 100 + 20));
+            });
+        });
+
+        function copyDiscord(text, el) {
+            navigator.clipboard.writeText(text).then(() => {
+                const toast = el.querySelector('.copy-toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        }
+
+        function initParticles() {
+            const canvas = document.getElementById('particle-canvas'), ctx = canvas.getContext('2d');
+            let particles = [];
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            window.addEventListener('resize', resize); resize();
+            class P {
+                constructor() { this.reset(); }
+                reset() { this.x = Math.random()*canvas.width; this.y = Math.random()*canvas.height; this.vx = (Math.random()-0.5)*0.5; this.vy = (Math.random()-0.5)*0.5; this.r = Math.random()*1.5; }
+                u() { this.x += this.vx; this.y += this.vy; if (this.x<0||this.x>canvas.width) this.vx*=-1; if (this.y<0||this.y>canvas.height) this.vy*=-1; }
+                d() { ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI*2); ctx.fillStyle = "rgba(0, 242, 255, 0.4)"; ctx.fill(); }
+            }
+            for(let i=0;i<60;i++) particles.push(new P());
+            function anim() {
+                ctx.clearRect(0,0,canvas.width,canvas.height);
+                particles.forEach((p,i) => {
+                    p.u(); p.d();
+                    for(let j=i+1;j<particles.length;j++) {
+                        const dx = p.x-particles[j].x, dy = p.y-particles[j].y, dist = Math.sqrt(dx*dx+dy*dy);
+                        if(dist<150) { ctx.beginPath(); ctx.strokeStyle=`rgba(0,242,255,${0.1*(1-dist/150)})`; ctx.moveTo(p.x,p.y); ctx.lineTo(particles[j].x,particles[j].y); ctx.stroke(); }
+                    }
+                });
+                requestAnimationFrame(anim);
+            }
+            anim();
+        }
+
+        window.onload = () => {
+            initParticles(); setLanguage('zh');
+            const observer = new IntersectionObserver(e => e.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('active'); }), {threshold:0.1});
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Favorites | FHSH</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+TC:wght@300;500;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0c;
+            --card-bg: rgba(20, 20, 25, 0.9);
+            --accent-color: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.5);
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --grid-color: rgba(0, 242, 255, 0.05);
+            --cursor-angle: 0deg;
+            --edge-proximity: 0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-color); color: var(--text-primary); font-family: 'Space Grotesk', 'Noto Sans TC', sans-serif; padding: 40px 10%; line-height: 1.6; overflow-x: hidden; }
+        body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px); background-size: 50px 50px; z-index: -2; }
+        
+        nav { position: fixed; top: 0; left: 0; width: 100%; padding: 1rem 10%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; backdrop-filter: blur(10px); background: rgba(10, 10, 12, 0.8); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .back-btn { color: var(--accent-color); text-decoration: none; font-weight: bold; font-family: 'JetBrains Mono', monospace; transition: 0.3s; }
+        .back-btn:hover { text-shadow: 0 0 10px var(--accent-glow); }
+        .lang-switch { display: flex; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); padding: 4px; border-radius: 4px; }
+        .lang-btn { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 2px 8px; border-radius: 2px; transition: 0.3s; }
+        .lang-btn.active { background: var(--accent-color); color: var(--bg-color); font-weight: bold; }
+
+        h1 { font-size: 3rem; margin-top: 80px; margin-bottom: 50px; text-align: center; }
+        
+        .character-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2.5rem; max-width: 1000px; margin: 0 auto; }
+        @media (max-width: 768px) { .character-grid { grid-template-columns: 1fr; } }
+        
+        .border-glow-card { position: relative; border-radius: 20px; background: rgba(255, 255, 255, 0.03); overflow: hidden; padding: 2px; transition: 0.3s; }
+        .edge-light { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 150%; height: 150%; background: conic-gradient(from var(--cursor-angle), transparent 70%, var(--accent-color) 85%, transparent 100%); opacity: calc(var(--edge-proximity) / 100); transition: opacity 0.3s ease; z-index: 1; }
+        .border-glow-inner { position: relative; background: var(--card-bg); border-radius: 18px; padding: 1.5rem; z-index: 2; height: 100%; display: flex; flex-direction: column; gap: 0.8rem; text-align: left; }
+        
+        .char-img { width: 100%; height: 280px; background: #1a1a1a; border-radius: 12px; margin-bottom: 0.5rem; object-fit: cover; }
+        .char-name { font-size: 1.5rem; color: #fff; font-weight: 700; }
+        .char-series { font-size: 0.9rem; color: var(--accent-color); font-family: 'JetBrains Mono', monospace; margin-bottom: 0.5rem; }
+        .char-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.5; }
+
+        /* Scroll-in Animation */
+        .scroll-in { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .scroll-in.visible { opacity: 1; transform: translateY(0); }
+
+        footer { margin-top: 100px; text-align: center; color: var(--text-secondary); font-size: 0.8rem; padding: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="./index.html" class="back-btn" data-t="back">← 返回主頁</a>
+        <div class="lang-switch">
+            <button class="lang-btn active" onclick="setLang('zh')">ZH</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
+            <button class="lang-btn" onclick="setLang('jp')">JP</button>
+        </div>
+    </nav>
+
+    <h1 data-t="title" class="scroll-in">我最愛的動漫角色</h1>
+
+    <div class="character-grid">
+        <!-- Character 1: 士道龍聖 -->
+        <div class="border-glow-card scroll-in">
+            <div class="edge-light"></div>
+            <div class="border-glow-inner">
+                <img src="./images/士道龍聖2.jpg" alt="Ryusei Shidou" class="char-img">
+                <div class="char-name" data-t="c1_name">士道龍聖</div>
+                <div class="char-series" data-t="c1_series">Blue Lock（藍色監獄）</div>
+                <p class="char-desc" data-t="c1_desc">Blue Lock 中最狂的存在。天才型前鋒，打球純靠直覺與本能，毫無章法卻令人難以應對。他那破碎的笑容和螺旋眼瞳，讓人永遠搞不清楚他在想什麼。</p>
+            </div>
+        </div>
+        <!-- Character 2: 西索 -->
+        <div class="border-glow-card scroll-in">
+            <div class="edge-light"></div>
+            <div class="border-glow-inner">
+                <img src="./images/西索4.jpg" alt="Hisoka Morow" class="char-img">
+                <div class="char-name" data-t="c2_name">西索</div>
+                <div class="char-series" data-t="c2_series">HUNTER×HUNTER</div>
+                <p class="char-desc" data-t="c2_desc">魔術師與殺手的結合體。他對強者有著近乎執念的迷戀，永遠帶著讓人不寒而慄的微笑。最可怕的不是他的實力，而是你永遠猜不透他的目的。</p>
+            </div>
+        </div>
+        <!-- Character 3: 半間修二 -->
+        <div class="border-glow-card scroll-in">
+            <div class="edge-light"></div>
+            <div class="border-glow-inner">
+                <img src="./images/半間修二3.jpg" alt="Shuji Hanma" class="char-img">
+                <div class="char-name" data-t="c3_name">半間修二</div>
+                <div class="char-series" data-t="c3_series">東京復仇者（Tokyo Revengers）</div>
+                <p class="char-desc" data-t="c3_desc">天生的混沌製造者。他喜歡亂局、嗜好戰鬥，卻從不屬於任何一方。莫名地讓人覺得他只活在自己的世界裡，但那正是他最吸引人的地方。</p>
+            </div>
+        </div>
+        <!-- Character 4: 不死川實彌 -->
+        <div class="border-glow-card scroll-in">
+            <div class="edge-light"></div>
+            <div class="border-glow-inner">
+                <img src="./images/6.jpg" alt="Sanemi Shinazugawa" class="char-img">
+                <div class="char-name" data-t="c4_name">不死川實彌</div>
+                <div class="char-series" data-t="c4_series">鬼滅之刃（Demon Slayer）</div>
+                <p class="char-desc" data-t="c4_desc">風柱，全身傷痕的猛者。外表凶惡、行事強硬，卻在那粗獷的外殼下藏著深刻的人性與悲劇。他的憤怒不是惡意，而是一種對軟弱的拒絕。</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 FHSH | Anime Favorites</p>
+    </footer>
+
+    <script>
+        const trans = {
+            zh: {
+                back: "← 返回主頁", title: "我最愛的動漫角色",
+                c1_name: "士道龍聖（Ryusei Shidou）", c1_series: "Blue Lock（藍色監獄）", c1_desc: "Blue Lock 中最狂的存在。天才型前鋒，打球純靠直覺與本能，毫無章法卻令人難以應對。他那破碎的笑容和螺旋眼瞳，讓人永遠搞不清楚他在想什麼。",
+                c2_name: "西索（Hisoka Morow）", c2_series: "HUNTER×HUNTER", c2_desc: "魔術師與殺手的結合體。他對強者有著近乎執念的迷戀，永遠帶著讓人不寒而慄的微笑。最可怕的不是他的實力，而是你永遠猜不透他的目的。",
+                c3_name: "半間修二（Shuji Hanma）", c3_series: "東京復仇者（Tokyo Revengers）", c3_desc: "天生的混沌製造者。他喜歡亂局、嗜好戰鬥，卻從不屬於任何一方。莫名地讓人覺得他只活在自己的世界裡，但那正是他最吸引人的地方。",
+                c4_name: "不死川實彌（Sanemi Shinazugawa）", c4_series: "鬼滅之刃（Demon Slayer）", c4_desc: "風柱，全身傷痕的猛者。外表凶惡、行事強硬，卻在那粗獷的外殼下藏著深刻的人性與悲劇。他的憤怒不是惡意，而是一種對軟弱的拒絕。"
+            },
+            en: {
+                back: "← Back", title: "Favorite Anime Characters",
+                c1_name: "Ryusei Shidou", c1_series: "Blue Lock", c1_desc: "The most unpredictable striker in Blue Lock. He plays on pure instinct, chaotic and unreadable — his spiral eyes and fractured grin make him one of a kind.",
+                c2_name: "Hisoka Morow", c2_series: "HUNTER×HUNTER", c2_desc: "A magician and a killer in one. His obsession with strong opponents is unsettling, and his ever-present smile hides intentions no one can predict.",
+                c3_name: "Shuji Hanma", c3_series: "Tokyo Revengers", c3_desc: "A born agent of chaos. He craves battle and disorder, loyal to no one. There's something magnetic about how completely he lives in his own world.",
+                c4_name: "Sanemi Shinazugawa", c4_series: "Demon Slayer", c4_desc: "The Wind Hashira, scarred from countless battles. Brutal on the surface, but beneath the rage lies a deeply human tragedy and an iron will to protect."
+            },
+            jp: {
+                back: "← 戻る", title: "お気に入りのキャラクター",
+                c1_name: "士道龍聖", c1_series: "ブルーロック", c1_desc: "ブルーロック最大の異端児。本能のままにプレーし、誰にも讀めないプレースタイルで常識を壊す天才FW。",
+                c2_name: "ヒソカ＝モロウ", c2_series: "HUNTER×HUNTER", c2_desc: "奇術師にして殺し屋。強者への執着と不気味な微笑みを持ち、誰もその真意を読み取れない危険な存在。",
+                c3_name: "半間修二", c3_series: "東京リベンジャーズ", c3_desc: "生まれながらの混乱製造者。誰の味方でもなく、ただ戦いと混沌を楽しむ存在。その自由さが不思議と魅力的に映る。",
+                c4_name: "不死川実弥", c4_series: "鬼滅の刃", c4_desc: "風柱・不死川実弥。全身に刻まれた傷跡を持ち、荒々しい外見の裏に深い人間性と悲劇を秘める猛者。"
+            }
+        };
+        function setLang(l) {
+            document.querySelectorAll('[data-t]').forEach(el => { el.textContent = trans[l][el.getAttribute('data-t')]; });
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase() === l));
+        }
+        
+        // Glow effect
+        document.addEventListener('mousemove', e => {
+            document.querySelectorAll('.border-glow-card').forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                const angle = Math.atan2(y, x) * (180 / Math.PI) + 90;
+                card.style.setProperty('--cursor-angle', `${angle}deg`);
+                const dist = Math.sqrt(x*x + y*y);
+                const maxDist = Math.sqrt((rect.width/2)**2 + (rect.height/2)**2);
+                card.style.setProperty('--edge-proximity', Math.min(100, (dist / maxDist) * 100 + 20));
+            });
+        });
+
+        // Scroll animation observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.scroll-in').forEach(el => observer.observe(el));
+        
+        window.onload = () => setLang('zh');
+    </script>
+</body>
+</html>
